@@ -12,79 +12,71 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-class Item:
+class DataStore:
     _counter = 0
 
-    def __init__(self, attr):
-        self.id = Item._counter
-        self.attr = attr
-        Item._counter += 1
-
-    def __str__(self):
-        return "item with attr: " + self.attr
-    
-    def update(self, attr):
-        self.attr = attr
-        return
-
-class DataStore:
-
     def __init__(self):
-        self.store = self._load()
+        self.store = []
         return
     
     def _itemExists(self, id):
-        if id in self.store:
-           return True
-        return False
+        for index, item in enumerate(self.store):
+            if item["id"] == int(id):
+                return index
+        return -1
     
-    def _save(self):
-        json_str = json.dumps({k: v.__dict__ for k,v in self.store.items()})
+    # def _save(self):
+    #     json_str = json.dumps({k: v.__dict__ for k,v in self.store.items()})
 
-        with open("data.json", mode="w", encoding="utf-8") as file:
-            file.write(json_str)
-        return
+    #     with open("data.json", mode="w", encoding="utf-8") as file:
+    #         file.write(json_str)
+    #     return
     
-    def _load(self):
-        try:
-            with open("data.json", mode="r", encoding="utf-8") as file_stream:
-                data = json.load(file_stream)
-        except FileNotFoundError as err:
-            logger.exception(f"file error: {err}")
-            return {}
-        return data
+    # def _load(self):
+    #     try:
+    #         with open("data.json", mode="r", encoding="utf-8") as file_stream:
+    #             data = json.load(file_stream)
+    #     except FileNotFoundError as err:
+    #         logger.exception(f"file error: {err}")
+    #         return {}
+    #     return data
     
     def create(self):
         logger.info("user selected create")
         attr = input("give an attribute for this item: ")
-        item = Item(attr)
-        self.store[item.id] = item
-
-        self._save()
+        item = {
+            "id": self._counter,
+            "attr": attr
+        }
+        self._counter += 1
+        self.store.append(item)
         return
     
     def read(self):
         logger.info("user selected read")
-        for id, item in self.store.items():
-            logger.info(str(id) + ": ", item)
+        print(self.store)
+        # for item in self.store:
+        #     print(item)
         return
     
     def update(self):
         logger.info("user selected update")
         id = input("provide an ID: ")
-        if not self._itemExists((int(id))):
+        index = self._itemExists(id)
+        if index == -1:
             logger.warning("could not update, item does not exist")
             return
         attr = input("provide an attribute: ")
-        self.store[int(id)].update(attr)
+        self.store[int(id)]["attr"] = attr
         return
     
     def delete(self):
         logger.info("user selected delete")
         id = input("provide an ID: ")
-        if not self._itemExists(int(id)):
+        index = self._itemExists(id)
+        if index == False and index != 0:
             logger.warning("could not delete, item does not exist")
             return
-        del self.store[int(id)]
+        del self.store[index]
         logger.info("deleted item")
         return
