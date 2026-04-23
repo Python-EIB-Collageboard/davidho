@@ -29,14 +29,22 @@ class AppController:
                 logger.info("user has quit program")
                 break
             elif userInput == "create":
-                self.db.create()
+                logger.info("user selected create")
+                attr = input("give an attribute for this item: ")
+                self.db.create(attr)
             elif userInput == "read":
+                logger.info("user selected read")
                 self.db.read()
             elif userInput == "update":
-                self.db.update()
+                logger.info("user selected update")
+                id = input("provide an ID: ")
+                attr = input("provide an attribute: ")
+                self.db.update(id, attr)
                 pass
             elif userInput == "delete":
-                self.db.delete()
+                logger.info("user selected delete")
+                id = input("provide an ID: ")
+                self.db.delete(id)
                 pass
         
     

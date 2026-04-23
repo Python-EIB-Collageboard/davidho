@@ -29,7 +29,7 @@ class DataStore:
     def _findLargestId(self):
         max = self.store[0]["id"] if self.store else None
 
-        if not max:
+        if max == None:
             return -1
 
         for item in self.store:
@@ -53,9 +53,7 @@ class DataStore:
         
         return data
     
-    def create(self):
-        logger.info("user selected create")
-        attr = input("give an attribute for this item: ")
+    def create(self, attr):
         item = {
             "id": self._counter,
             "attr": attr
@@ -68,31 +66,34 @@ class DataStore:
         return
     
     def read(self):
-        logger.info("user selected read")
         print(self.store)
 
         return
     
-    def update(self):
-        logger.info("user selected update")
-        id = input("provide an ID: ")
+    def update(self, id, attr):
         index = self._itemExists(id)
+
         if index == -1:
             logger.warning("could not update, item does not exist")
             return
-        attr = input("provide an attribute: ")
+        
         self.store[int(id)]["attr"] = attr
+
+        self._save()
 
         return
     
-    def delete(self):
-        logger.info("user selected delete")
-        id = input("provide an ID: ")
+    def delete(self, id):
         index = self._itemExists(id)
+
         if index == False and index != 0:
             logger.warning("could not delete, item does not exist")
             return
-        del self.store[index]
-        logger.info("deleted item")
         
+        del self.store[index]
+
+        logger.info("deleted item")
+
+        self._save()
+
         return
