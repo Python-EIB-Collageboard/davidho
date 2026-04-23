@@ -16,7 +16,8 @@ class DataStore:
     _counter = 0
 
     def __init__(self):
-        self.store = []
+        self.store = self._load()
+        self._counter = self._findLargestId() + 1
         return
     
     def _itemExists(self, id):
@@ -25,21 +26,32 @@ class DataStore:
                 return index
         return -1
     
-    # def _save(self):
-    #     json_str = json.dumps({k: v.__dict__ for k,v in self.store.items()})
+    def _findLargestId(self):
+        max = self.store[0]["id"] if self.store else None
 
-    #     with open("data.json", mode="w", encoding="utf-8") as file:
-    #         file.write(json_str)
-    #     return
+        if not max:
+            return -1
+
+        for item in self.store:
+            if max < item["id"]:
+                max = item["id"]
+        
+        return max
     
-    # def _load(self):
-    #     try:
-    #         with open("data.json", mode="r", encoding="utf-8") as file_stream:
-    #             data = json.load(file_stream)
-    #     except FileNotFoundError as err:
-    #         logger.exception(f"file error: {err}")
-    #         return {}
-    #     return data
+    def _save(self):
+        with open("data.json", mode="w", encoding="utf-8") as file:
+            json.dump(self.store, file)
+        return
+    
+    def _load(self):
+        try:
+            with open("data.json", mode="r", encoding="utf-8") as file_stream:
+                data = json.load(file_stream)
+        except FileNotFoundError as err:
+            logger.error("file error: data.json does not exist")
+            return []
+        
+        return data
     
     def create(self):
         logger.info("user selected create")
@@ -50,13 +62,15 @@ class DataStore:
         }
         self._counter += 1
         self.store.append(item)
+
+        self._save()
+
         return
     
     def read(self):
         logger.info("user selected read")
         print(self.store)
-        # for item in self.store:
-        #     print(item)
+
         return
     
     def update(self):
@@ -68,6 +82,7 @@ class DataStore:
             return
         attr = input("provide an attribute: ")
         self.store[int(id)]["attr"] = attr
+
         return
     
     def delete(self):
@@ -79,4 +94,5 @@ class DataStore:
             return
         del self.store[index]
         logger.info("deleted item")
+        
         return

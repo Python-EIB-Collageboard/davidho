@@ -1,4 +1,16 @@
+import logging
 import datastore
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s | %(name)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.FileHandler("system.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
 
 class AppController:
     def __init__(self):
@@ -14,6 +26,7 @@ class AppController:
                 '''
             ).lower()
             if userInput == "quit":
+                logger.info("user has quit program")
                 break
             elif userInput == "create":
                 self.db.create()
