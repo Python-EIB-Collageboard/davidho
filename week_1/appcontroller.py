@@ -1,5 +1,5 @@
 import logging
-import datastore
+import week_1.datastore as datastore
 
 logging.basicConfig(
     level=logging.DEBUG,

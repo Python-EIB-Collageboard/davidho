@@ -1,5 +1,5 @@
 from unittest.mock import mock_open, patch
-import datastore
+import week_1.datastore as datastore
 
 test_db = datastore.DataStore()
 
